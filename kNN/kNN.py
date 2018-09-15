@@ -46,6 +46,12 @@ class Node:
     def getLeft(self):
         return self.left
 
+    def setLeft(self, left):
+        self.left = left
+
+    def setRight(self, right):
+        self.right = right
+
     def getRight(self):
         return self.right
 
@@ -58,13 +64,16 @@ def getPartition(X: np.array, i):
 
 
 def constructKdTree(X: np.array):
+    return constructKdTreeRecur(X, 0, len(X[0]))
+
+
+def constructKdTreeRecur(X: np.array, i: int, k: int):
     N = len(X)
-    k = len(X[0])
-    for i in range(N):
-        l = i % k #the dimension of partition 
-        value, left, right = getPartition(X, l)
-        node = 
-    pass
+    if N == 0:
+        return None
+    value, left, right = getPartition(X, i)
+    node = Node(value, constructKdTreeRecur(left, (i + 1) % k, k), constructKdTreeRecur(right, (i + 1) % k, k))
+    return node
 
 
 def kNN(X: np.array, y: np.array, x: np.array, k: int, distance: "function") -> int:

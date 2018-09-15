@@ -1,7 +1,7 @@
 # k-nearest neighbor, kNN
 
 import numpy as np
-from cmath import *
+import cmath
 import operator
 
 
@@ -12,7 +12,7 @@ def Lp_distance(x1: np.array, x2: np.array, p=2) -> int:
         return sum(abs(x1 - x2))
     elif p == 2:
         return np.sqrt(sum((x1 - x2)**2))
-    elif p == inf:
+    elif p == cmath.inf:
         return max(x1 - x2)
     else:
         return (sum((x1 - x2)**p))**(1/p)
@@ -59,7 +59,7 @@ class Node:
 def getPartition(X: np.array, i):
     '''return mid value, left array and right array'''
     sorted(X, key=lambda x: x[i])
-    mid = X.len() / 2
+    mid = len(X) // 2
     return X[mid], X[:mid], X[mid+1:]
 
 

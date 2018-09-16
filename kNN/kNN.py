@@ -3,6 +3,7 @@
 import numpy as np
 import cmath
 import operator
+import heapq
 
 
 def Lp_distance(x1: np.array, x2: np.array, p=2) -> int:
@@ -39,6 +40,7 @@ class Node:
         self.value = value
         self.left = left
         self.right = right
+        self.isVisited = False
 
     def getValue(self):
         return self.value
@@ -55,10 +57,16 @@ class Node:
     def getRight(self):
         return self.right
 
+    def getIsVisited(self):
+        return self.isVisited
+    
+    def setIsVisited(self, flag):
+        self.isVisited = flag
+
 
 def getPartition(X: np.array, i):
     '''return mid value, left array and right array'''
-    sorted(X, key=lambda x: x[i])
+    X = sorted(X, key=lambda x: x[i])
     mid = len(X) // 2
     return X[mid], X[:mid], X[mid+1:]
 
@@ -74,6 +82,25 @@ def constructKdTreeRecur(X: np.array, i: int, k: int):
     value, left, right = getPartition(X, i)
     node = Node(value, constructKdTreeRecur(left, (i + 1) % k, k), constructKdTreeRecur(right, (i + 1) % k, k))
     return node
+
+
+def findLeaf(node: Node, x: np.array, i: int, heap: list, k: int, distance):
+    if node == None:
+        node.setIsVisited(True)
+        if len(heap) < k:
+            heappush(heap, (distance(x, )))
+        return
+    dimension = i % len(x)
+    if x[dimension] <= node.getValue()[dimension]:
+        findLeaf(node.getLeft(), x, i + 1)
+    else:
+        findLeaf(node.getRight(), x, i + 1)
+        
+
+def searchByKdTree(kdTree: Node, x: np.array, k: int):
+    kNeighborHeap = []
+
+    pass
 
 
 def kNN(X: np.array, y: np.array, x: np.array, k: int, distance: "function") -> int:

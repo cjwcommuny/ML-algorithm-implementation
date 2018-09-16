@@ -83,7 +83,7 @@ def constructKdTreeRecur(X: np.array, i: int, k: int):
     node = Node(value, constructKdTreeRecur(left, (i + 1) % k, k), constructKdTreeRecur(right, (i + 1) % k, k))
     return node
 
-
+'''
 def findLeaf(node: Node, x: np.array, i: int, heap: list, k: int, distance):
     if node == None:
         node.setIsVisited(True)
@@ -92,10 +92,12 @@ def findLeaf(node: Node, x: np.array, i: int, heap: list, k: int, distance):
         return
     dimension = i % len(x)
     if x[dimension] <= node.getValue()[dimension]:
+        if node.getLeft() == None:
+
         findLeaf(node.getLeft(), x, i + 1)
     else:
         findLeaf(node.getRight(), x, i + 1)
-        
+'''
 
 def searchByKdTree(kdTree: Node, x: np.array, k: int):
     kNeighborHeap = []

@@ -9,7 +9,7 @@ def test_squareFunc():
     k_max = 200
     x0 = 100
     epsilon = 0.001
-    minimalPoint, f_current, k = gradient_descent.gradientDescent(squareGradient, squareFunc, epsilon, step, x0, k_max)
+    minimalPoint, f_current, k = gradient_descent.batchGradientDescent(squareGradient, squareFunc, epsilon, step, x0, k_max)
     print(minimalPoint, f_current, k)
 
 

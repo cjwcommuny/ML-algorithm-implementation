@@ -36,14 +36,17 @@ def linearTransformationGradient(theta, X: np.matrix):
 
 
 def squareCost(theta, X: np.matrix, y, h):
+    '''cost = (h(X) - y) ^ 2'''
     return np.sum(np.square(h(theta, X) - y))
 
 
 def squareCostGradient(theta, X, y, h, h_gradient):
+    '''gradient = 2 * h' * (h(X) - y) '''
     return 2 * h_gradient(theta, X) * (h(theta, X) - y)
 
 
 def union_shuffled_copies(arr1, arr2):
+    '''shuffle two array randomly'''
     #assert len(arr1) == len(arr2)
     p = np.random.permutation(len(arr1))
     return arr1[p], arr2[p]
@@ -51,8 +54,8 @@ def union_shuffled_copies(arr1, arr2):
 
 def miniBatchStochasticGradientDescent(X,
                               y,
-                              theta0,
-                              k_max,
+                              theta0: "init theta",
+                              k_max: "max iteration count",
                               step,
                               batchSize,
                               computeFunc=squareCost,
@@ -60,7 +63,9 @@ def miniBatchStochasticGradientDescent(X,
                               h=linearTransformation,
                               h_gradient=linearTransformationGradient,
                               epsilon=0.01):
-    '''return optimized point `theta`, current function value and the count of iteration'''
+    '''return optimized point `theta`, current function value and the count of iteration\n
+    the default function is square function and h is just a linear funtion\n
+    the default configuration is the formula: cost(theta) = (X * theta - y) ^ 2'''
     m = len(X)
     k = 0
     theta = theta0

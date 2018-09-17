@@ -20,10 +20,11 @@ def batchGradientDescent(computeGradient, computeFunc, epsilon, step, x0: "initi
 
 
 def linearTransformation(X, theta):
-    if X.shape[1] == 1 and theta.shape[1] == 1:
-        return np.dot(theta.T, X)
-    else:
-        return np.dot(X, theta)
+    return np.dot(X, theta)
+
+
+def singleLinearTransformation(x, theta):
+    return np.dot(theta.T, x)
 
 
 def linearMatrix(X, theta):
@@ -49,7 +50,8 @@ def stochasticGradientDescent(X: "dataset", y: "label", theta0, epsilon, k_max,
         if k > k_max:
             break
         for i in range(m):
-            theta.T += -step * computeGradient(X, y, theta, linearMatrix, linearTransformation)
+            theta.T += -step * computeGradient(X[i], y[i], theta, linearMatrix,
+                                               singleLinearTransformation)
         f_previous = f_current
         f_current = computeCostFunc(X, y, theta, linearMatrix)
         if abs(f_current - f_previous) < epsilon:

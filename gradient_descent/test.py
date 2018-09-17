@@ -26,7 +26,8 @@ def test_SGD():
     step = 1
     for i in range(m):
         X[i][0], X[i][1] = random.uniform(-100, 100), random.uniform(-100, 100)
-        y[i] = gradient_descent.linearTransformation(X[i].T, theta_original)
+        y[i] = gradient_descent.singleLinearTransformation(
+            X[i].T, theta_original)
     theta, f, k = gradient_descent.stochasticGradientDescent(X, y, theta0, epsilon, k_max, step)
     print(theta, f, k)
 

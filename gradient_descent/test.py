@@ -1,5 +1,6 @@
 import unittest
 import numpy as np
+import numpy.matlib
 import gradient_descent
 import random
 
@@ -15,20 +16,19 @@ def test_squareFunc():
 
 
 def test_SGD():
-    theta0 = np.array([100, 50])
+    theta0 = np.mat([1.0, 1.0]).T
     dimension = 2
-    m = 100
-    X = np.zeros([m, dimension])
-    y = np.zeros([m, 1])
-    theta_original = np.array([3, 5])
+    m = 10
+    X = np.matlib.zeros([m, dimension])
+    y = np.matlib.zeros([m, 1])
+    theta_original = np.mat([3.0, 5.0]).T
     epsilon = 0.01
     k_max = 100
-    step = 1
+    step = 0.5
     for i in range(m):
-        X[i][0], X[i][1] = random.uniform(-100, 100), random.uniform(-100, 100)
-        y[i] = gradient_descent.singleLinearTransformation(
-            X[i].T, theta_original)
-    theta, f, k = gradient_descent.stochasticGradientDescent(X, y, theta0, epsilon, k_max, step)
+        X[i,0], X[i,1] = random.uniform(-20, 20), random.uniform(-20, 20)
+        y[i,0] = gradient_descent.linearTransformation(theta_original, X[i].T)
+    theta, f, k = gradient_descent.stochasticGradientDescent(X, y, theta0, k_max, step)
     print(theta, f, k)
 
 #test_squareFunc()

@@ -15,21 +15,24 @@ def test_squareFunc():
     print(minimalPoint, f_current, k)
 
 
-def test_SGD():
-    theta0 = np.mat([1.0, 1.0]).T
-    dimension = 2
+
+
+
+def test_MBSGD():
     m = 10
-    X = np.matlib.zeros([m, dimension])
+    X = np.matlib.zeros([m, 2])
+    X[:,1].fill(1.0)
     y = np.matlib.zeros([m, 1])
-    theta_original = np.mat([3.0, 5.0]).T
-    epsilon = 0.01
+    theta_original = np.mat([3, 4]).T
+    theta0 = np.mat([1.0,1.0]).T
     k_max = 100
-    step = 0.5
+    step = 0.05
     for i in range(m):
-        X[i,0], X[i,1] = random.uniform(-20, 20), random.uniform(-20, 20)
-        y[i,0] = gradient_descent.linearTransformation(theta_original, X[i].T)
-    theta, f, k = gradient_descent.stochasticGradientDescent(X, y, theta0, k_max, step)
+        X[i, 0] = random.uniform(-20, 20)
+        y[i, 0] = gradient_descent.linearTransformation(theta_original, X[i].T)
+    theta, f, k = gradient_descent.miniBatchStochasticGradientDescent(
+        X, y, theta0, k_max, step, m)
     print(theta, f, k)
 
-#test_squareFunc()
-test_SGD()
+
+test_MBSGD()

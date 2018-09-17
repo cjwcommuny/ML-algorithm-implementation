@@ -1,4 +1,5 @@
 import numpy as np
+import numpy.random
 
 
 def batchGradientDescent(computeGradient, computeFunc, epsilon, step,
@@ -22,48 +23,6 @@ def batchGradientDescent(computeGradient, computeFunc, epsilon, step,
     return x, f_current, k
 
 
-'''
-def linearTransformation(X, theta):
-    return np.dot(X, theta)
-
-
-def singleLinearTransformation(x, theta):
-    return np.dot(theta.T, x)
-
-
-def linearMatrix(X, theta):
-    return theta
-
-
-def computeCostFunc(X: "dataset", y: "label", theta: "parameter", h: "function, h(X, theta)"):
-    return 0.5 * np.sum((h(X, theta) - y.T)** 2) / len(X)
-
-def computeGradient(X: "dataset", y: "label", theta: "parameter", h_gradient: "gradient of function, h_gradient(X, theta)", h: "function, h(X, theta)"):
-    gradient = (h(X, theta) - y.T) * h_gradient(X, theta) / len(X)
-    return gradient
-
-
-def stochasticGradientDescent(X: "dataset", y: "label", theta0, epsilon, k_max,
-                              step, h=computeCostFunc):
-    m = len(X)  #size of dataset
-    k = 0
-    theta = theta0
-    f_previous = 0
-    f_current = computeCostFunc(X, y, theta, linearTransformation)
-
-    while True:
-        if k > k_max:
-            break
-        for i in range(m):
-            theta += -step * computeGradient(X[i], y[i], theta, linearMatrix,
-                                               singleLinearTransformation)
-        f_previous = f_current
-        f_current = computeCostFunc(X, y, theta, linearTransformation)
-        if abs(f_current - f_previous) < epsilon:
-            break
-    return theta, f_current, k
-'''
-
 def linearTransformation(theta, X: np.matrix):
     if (X.shape[1] == 1):
         #single vector
@@ -73,7 +32,7 @@ def linearTransformation(theta, X: np.matrix):
         return X * theta
 
 def linearTransformationGradient(theta, X: np.matrix):
-    return X
+    return X.T
 
 
 def squareCost(theta, X: np.matrix, y, h):
@@ -90,11 +49,12 @@ def union_shuffled_copies(arr1, arr2):
     return arr1[p], arr2[p]
 
 
-def stochasticGradientDescent(X,
+def miniBatchStochasticGradientDescent(X,
                               y,
                               theta0,
                               k_max,
                               step,
+                              batchSize,
                               computeFunc=squareCost,
                               computeGradient=squareCostGradient,
                               h=linearTransformation,
@@ -106,14 +66,22 @@ def stochasticGradientDescent(X,
     theta = theta0
     f_previous = 0
     f_current = computeFunc(theta, X, y, h) / m
+    deviations = []  #for test
     while (True):
         if k > k_max:
             break
+        batchIndexs = np.random.choice(m, batchSize)
+        X_batch = X[batchIndexs]
+        y_batch = y[batchIndexs]
+        theta -= step * computeGradient(theta, X_batch, y_batch, h, h_gradient)
+        '''
         X, y = union_shuffled_copies(X, y)
         for i in range(m):
             theta -= step * computeGradient(theta, X[i].T, y[i,0], h, h_gradient)
+        '''
         f_previous = f_current
-        f_current = computeFunc(theta, X, y, h)
+        f_current = computeFunc(theta, X, y, h) / m
         if abs(f_current - f_previous) < epsilon:
             break
+        deviations.append(abs(f_current - f_previous))
     return theta, f_current, k

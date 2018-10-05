@@ -48,6 +48,9 @@ def forwardPropagation(data: Data, param: Parameter, op: Operation):
         X_previous = X_current
         X_current = f(X_previous * W[k] + B[k].T) #using broadcast
     y_predict = X_current
-    #loss = L(y_predict, y) + lam * omega(param)
-    #return loss
-    return y_predict
+    loss = L(y_predict, y) + lam * omega(param)
+    return loss
+
+def backpropagation(data: Data, param: Parameter, op: Operation):
+    
+    pass

@@ -15,7 +15,7 @@ def test():
     data = Data(X, y)
     param = Parameter(W, B, lam)
     op = Operation(ReLU)
-    y_predict = forwardPropagation(data, param, op)
-    print(y_predict)
+    error = forwardPropagation(data, param, op)
+    print(error)
     
 test()

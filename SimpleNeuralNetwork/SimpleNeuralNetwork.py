@@ -3,29 +3,22 @@ import numpy.matlib
 import types
 
 class Operation:
-    activationFunction: types.FunctionType = None
-
     def __init__(self, activationFunction):
-        self.activationFunction = activationFunction
+        self.activationFunction: types.FunctionType = activationFunction
+
 
 class Data:
-    X: np.mat = None
-    y: np.mat = None
     def __init__(self, X, y):
-        self.X = X
-        self.y = y
+        self.X: np.mat = X
+        self.y: np.mat = y
+
 
 class Parameter:
-    W: np.mat = None #weight
-    c: np.mat = None #bias
-    w: np.mat = None  #weight
-    b: np.mat = None  #bias
-
     def __init__(self, W, c, w, b):
-        self.W = W
-        self.c = c
-        self.w = w
-        self.b = b
+        self.W: np.mat = W
+        self.c: np.mat = c
+        self.w: np.mat = w
+        self.b: np.mat = b
 
 
 def ReLU(z: np.mat):

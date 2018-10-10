@@ -1,6 +1,6 @@
 import numpy as np
 import scipy
-from scipy.signal import convolve
+from scipy.ndimage import correlate
 from enum import Enum, unique
 
 
@@ -51,6 +51,7 @@ def concatnateInputWithPadding(inputTensor, paddingX: int, paddingY: int):
     return result
 
 
+# scipy.ndimage.filters.maximum_filter
 def pooling(inputTensor,
             kernelSize,
             stride=1,
@@ -78,7 +79,6 @@ def pooling(inputTensor,
     inputTensor = concatnateInputWithPadding(inputTensor, paddingX, paddingY)
     lenZ, lenY, lenX = np.shape(inputTensor)
 
-
     # get pooling function according to poolingType
     poolingCoreFunction = getPoolingCoreFunction(poolingType)
 
@@ -88,9 +88,41 @@ def pooling(inputTensor,
         (lenX - kernelSizeX) // strideX + 1,
     ))
 
-    for xResultIndex, xKernelIndex in enumerate(range(0, lenX - kernelSizeX + 1, strideX)):
-        for yResultIndex, yKernelIndex in enumerate(range(0, lenY - kernelSizeY + 1, strideY)):
-            poolingTensor = inputTensor[:, yKernelIndex:yKernelIndex + kernelSizeY, xKernelIndex:xKernelIndex + kernelSizeX]
-            resultTensor[:, yResultIndex, xResultIndex] = poolingCoreFunction(poolingTensor, axis=(1, 2))
+    for xResultIndex, xKernelIndex in enumerate(
+            range(0, lenX - kernelSizeX + 1, strideX)):
+        for yResultIndex, yKernelIndex in enumerate(
+                range(0, lenY - kernelSizeY + 1, strideY)):
+            poolingTensor = inputTensor[:, yKernelIndex:yKernelIndex +
+                                        kernelSizeY, xKernelIndex:
+                                        xKernelIndex + kernelSizeX]
+            resultTensor[:, yResultIndex, xResultIndex] = poolingCoreFunction(
+                poolingTensor, axis=(1, 2))
 
+    return resultTensor
+
+# padding parameter not used if use the corelate function from the library.
+def convolveLayer(inputTensor, kernel, stride, padding=0):
+    kernelSizeY, kernelSizeX = np.shape(kernel)
+    strideX, strideY = getBinaryParameter(stride)
+    paddingX, paddingY = getBinaryParameter(padding)
+
+    #convert inputTensor's dim to 3
+    inputShapeLen = len(inputTensor.shape)
+    if inputShapeLen == 1:
+        inputTensor = np.expand_dims(inputTensor, 0)
+        inputTensor = np.expand_dims(inputTensor, 0)
+        pass
+    elif inputShapeLen == 2:
+        inputTensor = np.expand_dims(inputTensor, 0)
+    elif inputShapeLen == 3:
+        pass
+    else:
+        #error
+        pass
+
+    # concatnate input array with padding
+    inputTensor = concatnateInputWithPadding(inputTensor, paddingX, paddingY)
+
+    resultTensor = None
+    correlate(inputTensor, kernel, resultTensor, mode="constant")
     return resultTensor

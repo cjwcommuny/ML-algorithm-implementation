@@ -25,6 +25,13 @@ def testPoolingFunc():
     print("second channel:", "\n", resultTensor[1])
 
 
+def testConvolveFunc():
+    A = np.random.randint(300, size=(2, 5, 7))
+    kernel = np.random.randint(300, size=(2, 2, 2))
+    stride = 1
+    padding = 0
+    result = CNN.convolveLayer(A, kernel, stride, padding)
+
 #a = np.arange(24).reshape((2, 3, 4))
 #testConcatnateFunc(a, (2, 1))
-testPoolingFunc()
+#testPoolingFunc()

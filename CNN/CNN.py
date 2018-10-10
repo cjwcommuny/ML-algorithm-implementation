@@ -15,7 +15,7 @@ def getBinaryParameter(parameter):
     '''unpackage the binary parameter'''
     parameter1, parameter2 = 0, 0
     if isinstance(parameter, tuple):
-        if len(tuple) != 2:
+        if len(parameter) != 2:
             pass
             # error
         else:
@@ -28,20 +28,27 @@ def getBinaryParameter(parameter):
     return parameter1, parameter2
 
 
-def maxPooling(input: np.array):
-    ''' input is a 3-D tensor'''
-
-
 def getPoolingCoreFunction(poolingType: PoolingType):
     if poolingType == PoolingType.Max:
-        return lambda input: np.max(input)
+        return np.max
     elif poolingType == PoolingType.avg:
-        return lambda input: np.average(input)
+        return np.average
     #elif poolingType == PoolingType.Lp:
-        #return None #TODO
+    #return None #TODO
     else:
         #error
         pass
+
+
+def concatnateInputWithPadding(inputTensor, paddingX: int, paddingY: int):
+    lenZ, lenY, lenX = np.shape(inputTensor)
+    xPaddingBlock = np.zeros((lenZ, lenY, paddingX))
+    result = np.append(xPaddingBlock, inputTensor, axis=2)  # axis=2 is X-axis
+    result = np.append(result, xPaddingBlock, axis=2)
+    yPaddingBlock = np.zeros((lenZ, paddingY, lenX + 2 * paddingX))
+    result = np.append(yPaddingBlock, result, axis=1)
+    result = np.append(result, yPaddingBlock, axis=1)
+    return result
 
 
 def pooling(inputTensor,
@@ -49,7 +56,6 @@ def pooling(inputTensor,
             stride=1,
             padding=0,
             poolingType: PoolingType = PoolingType.Max):
-    paddingValue = 0
     kernelSizeX, kernelSizeY = getBinaryParameter(kernelSize)
     strideX, strideY = getBinaryParameter(stride)
     paddingX, paddingY = getBinaryParameter(padding)
@@ -66,14 +72,25 @@ def pooling(inputTensor,
         pass
     else:
         #error
+        pass
 
-    #TODO concatnete input array with padding
+    # concatnate input array with padding
+    inputTensor = concatnateInputWithPadding(inputTensor, paddingX, paddingY)
+    lenZ, lenY, lenX = np.shape(inputTensor)
 
-    poolingCoreFunction = getPoolingCoreFunction(poolingType)  #TODO
 
-    resultTensor = np.array() #TODO
-    for xResultIndex, xKernelIndex in range(kernelSizeX + 2 * paddingX - kernelSizeX, step=strideX): #TODO: check boundary and notice that boundary handling
-        for yResultIndex, yKernelIndex in range(kernelSizeY + 2 * paddingY - kernelSizeY, step=strideY):
-            resultTensor[xResultIndex][yResultIndex] = poolingCoreFunction(inputTensor)
+    # get pooling function according to poolingType
+    poolingCoreFunction = getPoolingCoreFunction(poolingType)
+
+    resultTensor = np.zeros((
+        lenZ,
+        (lenY - kernelSizeY) // strideY + 1,
+        (lenX - kernelSizeX) // strideX + 1,
+    ))
+
+    for xResultIndex, xKernelIndex in enumerate(range(0, lenX - kernelSizeX + 1, strideX)):
+        for yResultIndex, yKernelIndex in enumerate(range(0, lenY - kernelSizeY + 1, strideY)):
+            poolingTensor = inputTensor[:, yKernelIndex:yKernelIndex + kernelSizeY, xKernelIndex:xKernelIndex + kernelSizeX]
+            resultTensor[:, yResultIndex, xResultIndex] = poolingCoreFunction(poolingTensor, axis=(1, 2))
 
     return resultTensor
